@@ -1,11 +1,17 @@
 import streamlit as st
+import os
 import joblib 
 import numpy as np 
 import pandas as pd
 
-load_scaler = joblib.load('scaler.pkl')
-load_scaler_y = joblib.load('scaler_y.pkl')
-load_model = joblib.load('energy_prediction_model.pkl')
+load_scaler_file_path = os.path.abspath('scaler.pkl')
+load_scaler_y_file_path = os.path.abspath('scaler_y.pkl')
+load_model_file_path = os.path.abspath('energy_prediction_model.pkl')
+
+
+load_scaler = joblib.load(load_scaler_file_path)
+load_scaler_y = joblib.load(load_scaler_y_file_path)
+load_model = joblib.load(load_model_file_path)
 
 data = pd.read_csv('data.csv')#,index_col=0
 
