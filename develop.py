@@ -16,13 +16,10 @@ st.write('''We need outdoor enthalpy to predict the energy consumption''')
 
 enthalpy = st.number_input("Enter your enthalpy value")
 
-text_input = st.text_input("Enter your date")
-
-
 
 
 # Title of the app
-st.title("Streamlit CSV Reader")
+st.title('Upload CSV File')
 
 # Upload a CSV file
 uploaded_file = st.file_uploader("data.csv", type=["csv"])
@@ -38,18 +35,24 @@ if uploaded_file is not None:
 
 
     # Allow the user to select a row
-    selected_row = st.number_input("Select a row index", min_value=0, max_value=len(df)-1, value=0, step=1)
+    selected_row = st.text_input("Select a date")
     # Display the selected row
-    st.write("### Selected Row:")
-    st.write(df.iloc[selected_row])
+    #st.write(df.iloc[selected_row])
+    selected_row = df[df['date']==str(selected_row)]
+    st.write(selected_row)
 
 
-##enthalpy = (data [data['date']==text_input]['enthalpy'])
-##st.subheader(enthalpy)
+    # Allow the user to select a column from the selected row
+    selected_column = st.selectbox("Select a column", df.columns)
+
+    # Display the selected column value from the selected row
+    selected_value = selected_row[selected_column].iloc[0]
+    st.write(f"{selected_column}: {selected_value}")
 
 
+
+enthalpy = selected_row['enthalpy'].iloc[0]    
 X = enthalpy
-
 X_tst = load_scaler.transform([[X]])
 
 energy_predicted = load_model.predict(X_tst)
@@ -58,16 +61,14 @@ energy_predicted = energy_predicted.reshape(len(energy_predicted),1)
 energy_predicted = load_scaler_y.inverse_transform(energy_predicted)
 energy_predicted = energy_predicted.reshape(len(energy_predicted),1)
 
-
 st.subheader(f'The predicted energy consumption is : {float(energy_predicted):.4f}')
+
+measured_energy_consumption = selected_row['energy'].iloc[0]  
+st.subheader(f'Measured energy consumption : {measured_energy_consumption: .4f}')
 
 
 Threshold = 306.62016807
 st.subheader(f'Threshold for abnormal energy consumption : {Threshold: .4f}')
-
-
-measured_energy_consumption = 5000
-st.subheader(f'Measured energy consumption : {measured_energy_consumption: .4f}')
 
 
 residual = (measured_energy_consumption - energy_predicted)
